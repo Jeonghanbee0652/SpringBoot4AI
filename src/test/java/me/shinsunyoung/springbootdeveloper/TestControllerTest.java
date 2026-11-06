@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = "spring.sql.init.mode=never")   // 4장 115p 필기: data.sql 중복 방지
+@SpringBootTest
 @AutoConfigureMockMvc
 class TestControllerTest {
     @Autowired
