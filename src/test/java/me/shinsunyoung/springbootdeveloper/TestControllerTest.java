@@ -5,8 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.sql.init.mode=never")   // 4장 115p 필기: data.sql 중복 방지
 @AutoConfigureMockMvc
 class TestControllerTest {
     @Autowired
@@ -28,12 +28,11 @@ class TestControllerTest {
 
     @Autowired
     private MemberRepository memberRepository;
-
     @BeforeEach
     public void mockMvcSetUp() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .build();
     }
-
     @AfterEach
     public void cleanUp() {
         memberRepository.deleteAll();
@@ -42,12 +41,15 @@ class TestControllerTest {
     @DisplayName("getAllMembers: 아티클 조회에 성공한다.")
     @Test
     public void getAllMembers() throws Exception {
+        // given
         final String url = "/test";
         Member savedMember = memberRepository.save(new Member("홍길동"));
 
+        // when
         final ResultActions result = mockMvc.perform(get(url)
                 .accept(MediaType.APPLICATION_JSON));
 
+        // then
         result
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(savedMember.getId()))
